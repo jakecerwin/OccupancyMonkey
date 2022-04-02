@@ -25,13 +25,13 @@ SECRET_KEY = 'q0pc8ax_f$@2=4_)wz!rgw50mef)z5jew40e4ppth$$%w5=@-='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ec2-52-15-186-208.us-east-2.compute.amazonaws.com', 'occupancymonkey.com']
+ALLOWED_HOSTS = ['localhost', 'ec2-52-15-186-208.us-east-2.compute.amazonaws.com', 'occupancymonkey.com']
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'map.apps.MapConfig',
+    'mapping.apps.MapConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
