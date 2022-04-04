@@ -141,7 +141,7 @@ void setup()
  
 void loop()
 {
-  delay(60000);
+  delay(3000);
   statusUpdate();
 
   now = time(nullptr);
