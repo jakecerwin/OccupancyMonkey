@@ -26,7 +26,7 @@ function getstatus() {
   let xhr = new XMLHttpRequest()
   xhr.onreadystatechange = function() {
       if (xhr.readyState != 4) return
-      refreshPage(xhr)
+      loadPage(xhr)
   }
 
   xhr.open("GET", "/get-status", true)
@@ -37,7 +37,7 @@ function getstatus() {
 function loadPage(xhr) {
   if (xhr.status == 200) {
       let response = JSON.parse(xhr.responseText)
-      loadStream(response)
+      loadStatus(response)
       return
   }
 
@@ -60,3 +60,40 @@ function loadPage(xhr) {
 
   displayError(response)
 }
+
+function loadStatus(items) {
+  let list = document.getElementById("table_list")
+  while (list.hasChildNodes()) {
+    list.removeChild(list.firstChild)
+  }
+
+  $(items).each(function () {
+    let id = "table_" +this.table;
+    if (document.getElementById(id) == null){
+      $("#table_list").prepend(
+        "<li>" + 
+          "table id" + this.table + " : " + this.status +
+        "</li>"
+      )
+    }
+  })
+}
+
+function test_post( id,status) {
+  //var commentText = document.getElementById("id_comment_input_text_" + id)
+  //let itemTextElement = document.getElementById("id_comment_input_text_" + id)
+  //let itemTextValue   = itemTextElement.value
+
+  let xhr = new XMLHttpRequest()
+  xhr.onreadystatechange = function() {
+      if (xhr.readyState != 4) return
+      
+  }
+
+  xhr.open("POST", "/data", true);
+  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhr.send("table_id=1&status=occupied)");
+  //xhr.send("text=" + itemTextValue + "&id=" + id + "&csrfmiddlewaretoken=" + getCSRFToken());
+}
+
+

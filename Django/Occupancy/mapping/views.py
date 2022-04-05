@@ -1,8 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 
 from django.http import HttpResponse
 from mapping.models import Table 
 from django.utils import timezone, dateformat
+
+
+from django.views.decorators.csrf import csrf_exempt
 
 import json
 
@@ -17,6 +21,7 @@ def test(request):
 def get_status(request):
   response_data = [] 
   items = Table.objects.all()
+  print(items)
   for table in items:
     item = {
       'table': table.id,
@@ -24,24 +29,43 @@ def get_status(request):
     }
     response_data.append(item)
 
+  if len(response_data) == 0:
+    response_data.append({'message' : 'empty'})
+
   response_json = json.dumps(response_data)
   response = HttpResponse(response_json, content_type='application/json')
   response['Access-Control-Allow-Origin'] = '*'
 
   return response
 
-
+@csrf_exempt
 def data(request):
   data = request.POST
 
   print(len(data))
-  table_id = data['table_id']
+  #key = data['key'] 
+
+
+  """table_id = data['table_id']
   status = data['status']
 
-  table = Table.objects.filter(table_id=table_id).all()[0]
+  table = get_object_or_404(Table, table_id=table_id)
 
   table.status = status
-  table.save()
+  table.save()"""
 
+  return HttpResponse('data received OK')
 
-  
+def test_post_entry_view_good_post_data(self):
+  '''post_entry view should return a 200 status if valid
+  '''
+
+  data = {'DHTP Data': ['10', '50.296', '50.94', '50.418', '50.425', '50.431', '50.94'],
+      'Test String': 'My Test String'}
+
+  request_url = reverse('data') 
+  response = self.client.post(request_url, content_type='application/json', 
+      data=json.dumps(data))
+
+  # Should return a 200 response indicating ok
+  self.assertEqual(response.status_code, 200) 
