@@ -40,19 +40,21 @@ def get_status(request):
 
 @csrf_exempt
 def data(request):
+  print("entering data")
   data = request.POST
 
   print(len(data))
   #key = data['key'] 
 
 
-  """table_id = data['table_id']
+  table_id = data['table_id']
   status = data['status']
+  
 
-  table = get_object_or_404(Table, table_id=table_id)
+  table = get_object_or_404(Table, id=table_id)
 
   table.status = status
-  table.save()"""
+  table.save()
 
   return HttpResponse('data received OK')
 

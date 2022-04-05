@@ -79,7 +79,7 @@ function loadStatus(items) {
   })
 }
 
-function test_post( id,status) {
+function test_post() {
   //var commentText = document.getElementById("id_comment_input_text_" + id)
   //let itemTextElement = document.getElementById("id_comment_input_text_" + id)
   //let itemTextValue   = itemTextElement.value
@@ -92,7 +92,7 @@ function test_post( id,status) {
 
   xhr.open("POST", "/data", true);
   xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  xhr.send("table_id=1&status=occupied)");
+  xhr.send("table_id=1" + "&status=occupied)");
   //xhr.send("text=" + itemTextValue + "&id=" + id + "&csrfmiddlewaretoken=" + getCSRFToken());
 }
 
