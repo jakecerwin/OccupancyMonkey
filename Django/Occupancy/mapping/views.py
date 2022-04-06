@@ -52,8 +52,11 @@ def data(request):
   
 
   table = get_object_or_404(Table, id=3)
-
-  table.status = "received"
+  print(table)
+  if table.status == "unoccupied 1":
+    table.status = "unoccupied 2"
+  else:
+    table.status = "unoccupied 1"
   table.save()
 
   return HttpResponse('data received OK')
