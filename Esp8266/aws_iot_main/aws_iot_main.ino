@@ -141,7 +141,11 @@ void setup()
  
 void loop()
 {
-  delay(3000);
+  int readDelay = 3000;
+  int mintimeBetweenSendingMessages = 5000;
+
+  
+  delay(readDelay);
   statusUpdate();
 
   now = time(nullptr);
@@ -158,12 +162,11 @@ void loop()
   if (!client.connected())
   {
     connectAWS();
-    publishMessage();
   }
   else
   {
     client.loop();
-    if (millis() - lastMillis > 5000)
+    if (millis() - lastMillis > mintimeBetweenSendingMessages)
     {
       lastMillis = millis();
       publishMessage();

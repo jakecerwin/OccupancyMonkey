@@ -92,7 +92,7 @@ function test_post() {
 
   xhr.open("POST", "/data", true);
   xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  xhr.send("table_id=1" + "&status=occupied)");
+  xhr.send("table_id=1" + "&status=occupied");
   //xhr.send("text=" + itemTextValue + "&id=" + id + "&csrfmiddlewaretoken=" + getCSRFToken());
 }
 
