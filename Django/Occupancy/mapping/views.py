@@ -44,14 +44,19 @@ def data(request):
   data = request.POST
 
 
+  table = get_object_or_404(Table, id=2)
+  
+  table.status = data['key']
+  table.save()
+
   #key = data['key'] 
-  table_id = data['table_id']
+  """table_id = data['table_id']
   status = data['status']
   
  
   table = get_object_or_404(Table, id=table_id)
   table.status = status
-  table.save()
+  table.save()"""
 
   return HttpResponse('data received OK')
 
