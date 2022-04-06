@@ -44,19 +44,13 @@ def data(request):
   data = request.POST
 
 
-  key = data['key'] 
-  """
-
+  #key = data['key'] 
   table_id = data['table_id']
-  status = data['status']"""
+  status = data['status']
   
-
-  table = get_object_or_404(Table, id=3)
-  print(table)
-  if table.status == "unoccupied 1":
-    table.status = key
-  else:
-    table.status = "unoccupied 1"
+ 
+  table = get_object_or_404(Table, id=table_id)
+  table.status = status
   table.save()
 
   return HttpResponse('data received OK')
