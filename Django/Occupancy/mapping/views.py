@@ -48,8 +48,10 @@ def get_status(request):
 @csrf_exempt
 def data(request):
   print("entering data")
-  data = request.body
-  print(data)
+  data = request.body[1:]
+  
+
+
 
   table = get_object_or_404(Table, id=2)
 
