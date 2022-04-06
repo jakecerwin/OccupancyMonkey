@@ -9,6 +9,7 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
   <title></title>
 
 
@@ -90,6 +91,14 @@
             "table id" + this.table + " : " + this.status +
             "</li>"
           )
+          var table = document.getElementById(this.table);
+          
+          if (this.status == "occupied") {
+            table.style.fill = "#D41159";
+          }
+          else if (this.status == "unoccupied") {
+            table.style.fill = "#3EE33A";
+          }
         }
       })
     }
@@ -132,6 +141,44 @@
   <div>
     <button type="Submit" onclick='test_post()'>test data </button>
   </div>
+  <div style="height:80vh; width:100vw; background-color:#c4c4c4">
+
+    <svg width="100%" height="100%" 
+         viewBox="0 0 562 380" fill="none" position="absolute"
+         xmlns="http://www.w3.org/2000/svg">
+      <rect width="562" height="380" fill="#c4c4c4"/>
+      <g>
+        <rect id="0" x="44" y="25" width="42" height="105" fill="#D41159"/>
+        <text x="50" y="50" fill="black">0</text>
+      </g>
+      
+      <g>
+        <rect id="1" x="44" y="137" width="42" height="105" fill="#D41159"/>
+        
+        <text x="50" y="162" fill="black">1</text>
+      </g>
+      <rect x="44" y="249" width="42" height="105" fill="#D41159"/>
+      <g>
+        <rect id="2" x="189" y="25" width="42" height="105" fill="#D41159"/>
+        <text x="194" y="50" fill="black">2</text>
+      </g>
+      <g>
+        <rect id="3" x="189" y="138" width="42" height="105" fill="#D41159"/>
+        <text x="194" y="162" fill="black">3</text>
+      </g>
+      <!-- <rect id="1" x="44" y="249" width="42" height="105" fill="#D41159"/>
+      <rect id="2" x="189" y="25" width="42" height="105" fill="#D41159"/>
+      <rect id="3" x="189" y="138" width="42" height="105" fill="#D41159"/> -->
+      <rect x="189" y="249" width="42" height="105" fill="#D41159"/>
+      <rect x="479" y="25" width="42" height="105" fill="#D41159"/>
+      <rect x="479" y="137" width="42" height="105" fill="#D41159"/>
+      <rect x="479" y="249" width="42" height="105" fill="#D41159"/>
+      <rect x="334" y="25" width="42" height="105" fill="#D41159"/>
+      <rect x="334" y="138" width="42" height="105" fill="#D41159"/>
+      <rect x="334" y="251" width="42" height="105" fill="#D41159"/>
+      </svg>
+  </div>
+ 
 
 
   <!-- Optional JavaScript -->

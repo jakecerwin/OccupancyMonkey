@@ -1,0 +1,9 @@
+.occupied {
+  fill: #D41159;
+  opacity: 1;
+}
+
+.unoccupied {
+  fill: #3EE33A;
+  opacity: 1;
+}
