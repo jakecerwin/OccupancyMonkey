@@ -41,11 +41,11 @@ def get_status(request):
 @csrf_exempt
 def data(request):
   print("entering data")
-  """data = request.POST
+  data = request.POST
 
-  print(len(data))
-  #key = data['key'] 
 
+  key = data['key'] 
+  """
 
   table_id = data['table_id']
   status = data['status']"""
@@ -54,7 +54,7 @@ def data(request):
   table = get_object_or_404(Table, id=3)
   print(table)
   if table.status == "unoccupied 1":
-    table.status = "unoccupied 2"
+    table.status = key
   else:
     table.status = "unoccupied 1"
   table.save()
