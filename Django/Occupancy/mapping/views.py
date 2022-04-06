@@ -12,6 +12,16 @@ import json
 
 # Create your views here.
 
+def verify_key(key):
+  return True 
+
+def _my_json_error_response(message, status=200):
+    # You can create your JSON by constructing the string representation yourself (or just use json.dumps)
+    response_json = '{ "error": "' + message + '" }'
+    return HttpResponse(response_json, content_type='application/json', status=status)
+
+
+
 def home(request):
   return render(request, 'mapping/mapping.html')
 
@@ -40,23 +50,30 @@ def get_status(request):
 
 @csrf_exempt
 def data(request):
-  print("entering data")
-  data = request.POST
 
-  print(len(data))
-  #key = data['key'] 
-
-
-  table_id = data['table_id']
-  status = data['status']
-  
-
-  table = get_object_or_404(Table, id=table_id)
-
-  table.status = status
+  table = get_object_or_404(Table, id=0)
+  table.status = "offline"
+  table.save()
+  table = get_object_or_404(Table, id=1)
+  table.status = "offline"
   table.save()
 
-  return HttpResponse('data received OK')
+
+  print("entering data")
+  data = json.loads(request.read())
+  
+  if verify_key(data['key']):
+    table_id = data['table_id']
+    status = data['status']
+    
+  
+    table = get_object_or_404(Table, id=table_id)
+    table.status = status
+    table.save()
+
+    return HttpResponse('data received OK')
+
+  return HttpResponse('valid Key')
 
 def test_post_entry_view_good_post_data(self):
   '''post_entry view should return a 200 status if valid
