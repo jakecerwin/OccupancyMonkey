@@ -48,8 +48,9 @@ def data(request):
 
   if table.status == "unoccupied":
     table.status = "occupied"
+    table.status = request
   else:
-    table.status = request.POST
+    table.status = "unoccupied"
 
   table.save()
 
