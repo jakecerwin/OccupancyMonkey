@@ -8,7 +8,7 @@ const char WIFI_PASSWORD[] = "12345678";           //0544287380
  
 #define THINGNAME "esp8266_10E_03"
 #define DEVICE "esp8266_10E_03"
-#define DEVICENUM 3
+#define DEVICENUM 2
 
 #define DJANGOKEY "T3nD1g1t_!"
  

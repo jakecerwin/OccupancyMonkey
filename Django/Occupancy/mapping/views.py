@@ -50,6 +50,15 @@ def get_status(request):
 
 @csrf_exempt
 def data(request):
+
+  table = get_object_or_404(Table, id=0)
+  table.status = "offline"
+  table.save()
+  table = get_object_or_404(Table, id=1)
+  table.status = "offline"
+  table.save()
+
+
   print("entering data")
   data = json.loads(request.read())
   
