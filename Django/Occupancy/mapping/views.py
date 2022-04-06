@@ -48,28 +48,17 @@ def get_status(request):
 @csrf_exempt
 def data(request):
   print("entering data")
-  data = json.loads(request.read())['table_id']
+  data = json.loads(request.read())]
   
 
-
-
-  table = get_object_or_404(Table, id=2)
-
-  if table.status == "unoccupied":
-    table.status = data
-  else:
-    table.status = "unoccupied"
-
-  table.save()
-
   #key = data['key'] 
-  """table_id = data['table_id']
+  table_id = data['table_id']
   status = data['status']
   
  
   table = get_object_or_404(Table, id=table_id)
   table.status = status
-  table.save()"""
+  table.save()
 
   return HttpResponse('data received OK')
 
