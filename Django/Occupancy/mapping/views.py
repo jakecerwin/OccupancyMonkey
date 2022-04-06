@@ -48,7 +48,7 @@ def get_status(request):
 @csrf_exempt
 def data(request):
   print("entering data")
-  data = json.loads(request.read())]
+  data = json.loads(request.read())
   
 
   #key = data['key'] 
