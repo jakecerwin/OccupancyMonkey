@@ -99,6 +99,9 @@
           else if (this.status == "unoccupied") {
             table.style.fill = "#3EE33A";
           }
+          else {
+            table.style.fill = "white";
+          }
         }
       })
     }
@@ -133,13 +136,6 @@
     <h1>This is our demo page</h1>
     <p1>Time until next refresh:</p1>
     <input id="timer" value=5></input>
-  </div>
-  <div>
-    <ul class='table_list' id='table_list'></ul>
-  </div>
-
-  <div>
-    <button type="Submit" onclick='test_post()'>test data </button>
   </div>
   <div style="height:80vh; width:100vw; background-color:#c4c4c4">
 
@@ -178,6 +174,14 @@
       <rect x="334" y="251" width="42" height="105" fill="#D41159"/>
       </svg>
   </div>
+  <div>
+    <ul class='table_list' id='table_list'></ul>
+  </div>
+
+  <div>
+    <button type="Submit" onclick='test_post()'>test data </button>
+  </div>
+
  
 
 
