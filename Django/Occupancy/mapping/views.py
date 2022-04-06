@@ -46,10 +46,10 @@ def data(request):
 
   table = get_object_or_404(Table, id=2)
 
-  if table.status == "unoccupied 1":
-    table.status = "unoccupied 2"
+  if table.status == "unoccupied":
+    table.status = "occupied"
   else:
-    table.status = "unoccupied 1"
+    table.status = request.POST
 
   table.save()
 
