@@ -45,8 +45,12 @@ def data(request):
 
 
   table = get_object_or_404(Table, id=2)
-  
-  table.status = data['key']
+
+  if table.status == "unoccupied 1":
+    table.status = "unoccupied 2"
+  else:
+    table.status = "unoccupied 1"
+
   table.save()
 
   #key = data['key'] 
