@@ -1,22 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <title></title>
 
-  {% load static %}
-  <script src=" static/data.js" ></script>
+
+  <script>
+
+    function sanitize(s) {
+      // Be sure to replace ampersand first
+      return s.replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+    }
+
+    function convertToSlug(Text) {
+      return Text
+        .replace(/:/g, '-colon-')
+        .replace(/\)/g, '-rparanthesis-')
+        .replace(/\(/g, '-lparanthesis-')
+        .replace(/ /g, '-space-')
+        .replace(/\^/g, '-carrot-')
+        ;
+    }
+
+    function displayError(message) {
+      let errorElement = document.getElementById("error")
+      errorElement.innerHTML = message
+    }
+
+    function getstatus() {
+      let xhr = new XMLHttpRequest()
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState != 4) return
+        loadPage(xhr)
+      }
+
+      xhr.open("GET", "/get-status", true)
+      xhr.send()
+    }
+
+
+    function loadPage(xhr) {
+      if (xhr.status == 200) {
+        let response = JSON.parse(xhr.responseText)
+        loadStatus(response)
+        return
+      }
+
+      if (xhr.status == 0) {
+        displayError("Cannot connect to server")
+        return
+      }
+
+
+      if (!xhr.getResponseHeader('content-type') == 'application/json') {
+        displayError("Received status=" + xhr.status)
+        return
+      }
+
+      let response = JSON.parse(xhr.responseText)
+      if (response.hasOwnProperty('error')) {
+        displayError(response.error)
+        return
+      }
+
+      displayError(response)
+    }
+
+    function loadStatus(items) {
+      let list = document.getElementById("table_list")
+      while (list.hasChildNodes()) {
+        list.removeChild(list.firstChild)
+      }
+
+      $(items).each(function () {
+        let id = "table_" + this.table;
+        if (document.getElementById(id) == null) {
+          $("#table_list").prepend(
+            "<li>" +
+            "table id" + this.table + " : " + this.status +
+            "</li>"
+          )
+        }
+      })
+    }
+
+    function test_post() {
+      //var commentText = document.getElementById("id_comment_input_text_" + id)
+      //let itemTextElement = document.getElementById("id_comment_input_text_" + id)
+      //let itemTextValue   = itemTextElement.value
+
+      let xhr = new XMLHttpRequest()
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState != 4) return
+
+      }
+
+      xhr.open("POST", "/data", true);
+      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhr.send("table_id=1" + "&status=occupied");
+      //xhr.send("text=" + itemTextValue + "&id=" + id + "&csrfmiddlewaretoken=" + getCSRFToken());
+    }
+
+
+
+
+
+
+  </script>
 </head>
+
 <body>
   <div>
-  <h1>This is our demo page</h1>
-  <p1>Time until next refresh:</p1>
-  <input id="timer" value=5></input>
+    <h1>This is our demo page</h1>
+    <p1>Time until next refresh:</p1>
+    <input id="timer" value=5></input>
   </div>
   <div>
     <ul class='table_list' id='table_list'></ul>
@@ -27,39 +134,46 @@
   </div>
 
 
-   <!-- Optional JavaScript -->
+  <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 
-  
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
 
 
-  <script >
+  <script>
     var interval = 5000; // ms
     var step = 100; //ms
     window.onload = getstatus;
     //window.setInterval(getstatus, interval);
-    
+
 
     function timer() {
       // the drift (positive for overshooting)
-    
-      var t = parseInt(parseFloat(document.getElementById("timer").value )* 1000);
-      if((t - step) > 0){
+
+      var t = parseInt(parseFloat(document.getElementById("timer").value) * 1000);
+      if ((t - step) > 0) {
         document.getElementById("timer").value = ((t - step) / 1000);
       } else {
         document.getElementById("timer").value = interval / 1000;
         getstatus()
       }
-      
 
-      }
+
+    }
 
     window.setInterval(timer, step);
 
   </script>
 
 </body>
+
 </html>
