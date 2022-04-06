@@ -54,7 +54,7 @@ def data(request):
   table = get_object_or_404(Table, id=2)
 
   if table.status == "unoccupied":
-    table.status = request.META
+    table.status = request.POST
   else:
     table.status = "unoccupied"
 
