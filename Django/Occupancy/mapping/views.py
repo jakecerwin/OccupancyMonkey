@@ -26,7 +26,7 @@ def home(request):
   return render(request, 'mapping/mapping.html')
 
 def test(request):
-  return HttpResponse('<h1>MapTest</h1>')
+  return render(request, 'mapping/mapTest.html')
 
 def get_status(request):
   response_data = [] 
