@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os, sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -116,11 +117,24 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
+path = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+PROJECT_ROOT = path
+STATIC_ROOT = path + '/mapping/static/'
+STATIC_URL = '/mapping/static/'
 
-STATIC_URL = 'static/'
-import os
-STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
+STATICFILES_DIRS = (
+    path,
 
+)
+
+STATICFILES_FINDERS = (
+'django.contrib.staticfiles.finders.FileSystemFinder',
+'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
+TEMPLATE_DIRS = (
+path + '/mapping/templates',
+) #this works, since it is loading the html
 
 
 # Default primary key field type
