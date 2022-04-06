@@ -12,6 +12,13 @@ import json
 
 # Create your views here.
 
+def _my_json_error_response(message, status=200):
+    # You can create your JSON by constructing the string representation yourself (or just use json.dumps)
+    response_json = '{ "error": "' + message + '" }'
+    return HttpResponse(response_json, content_type='application/json', status=status)
+
+
+
 def home(request):
   return render(request, 'mapping/mapping.html')
 
@@ -41,7 +48,7 @@ def get_status(request):
 @csrf_exempt
 def data(request):
   print("entering data")
-  EnvironmentError(request)
+  return _my_json_error_response(request, 400)
   #data = request.POST
 
 
