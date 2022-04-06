@@ -48,15 +48,13 @@ def get_status(request):
 @csrf_exempt
 def data(request):
   print("entering data")
-  return _my_json_error_response(request, 400)
-  #data = request.POST
-
+  data = request.POST
+  print(data)
 
   table = get_object_or_404(Table, id=2)
 
   if table.status == "unoccupied":
     table.status = "occupied"
-    table.status = request
   else:
     table.status = "unoccupied"
 
