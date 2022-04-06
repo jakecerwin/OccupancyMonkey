@@ -48,13 +48,13 @@ def get_status(request):
 @csrf_exempt
 def data(request):
   print("entering data")
-  data = request.GET
+  data = request.content_params
   print(data)
 
   table = get_object_or_404(Table, id=2)
 
   if table.status == "unoccupied":
-    table.status = request.POST
+    table.status = data
   else:
     table.status = "unoccupied"
 
