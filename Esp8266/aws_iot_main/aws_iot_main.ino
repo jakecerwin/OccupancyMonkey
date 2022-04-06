@@ -112,7 +112,7 @@ void publishMessage()
 {
   StaticJsonDocument<200> doc;
   doc["time"] = millis();
-  doc["device"] = DEVICE;
+  doc["table_id"] = DEVICENUM;
   doc["status"] = Status;
   char jsonBuffer[512];
   serializeJson(doc, jsonBuffer); // print to client
