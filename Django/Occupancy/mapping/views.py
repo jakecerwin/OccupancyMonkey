@@ -12,6 +12,9 @@ import json
 
 # Create your views here.
 
+def verify_key(key):
+  return True 
+
 def _my_json_error_response(message, status=200):
     # You can create your JSON by constructing the string representation yourself (or just use json.dumps)
     response_json = '{ "error": "' + message + '" }'
@@ -50,17 +53,18 @@ def data(request):
   print("entering data")
   data = json.loads(request.read())
   
-
-  #key = data['key'] 
-  table_id = data['table_id']
-  status = data['status']
+  if verify_key(data['key']):
+    table_id = data['table_id']
+    status = data['status']
+    
   
- 
-  table = get_object_or_404(Table, id=table_id)
-  table.status = status
-  table.save()
+    table = get_object_or_404(Table, id=table_id)
+    table.status = status
+    table.save()
 
-  return HttpResponse('data received OK')
+    return HttpResponse('data received OK')
+
+  return HttpResponse('valid Key')
 
 def test_post_entry_view_good_post_data(self):
   '''post_entry view should return a 200 status if valid
