@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  {% load static %}
+  <!-- {% load static %} -->
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -10,8 +10,60 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="{% static 'mapping/base.css' %}">
+  <!-- <link rel="stylesheet" type="text/css" href="{% static 'mapping/base.css' %}"> -->
   <title></title>
+
+  <style>
+    #fullContainer{
+    position: relative;
+    /* height:100%; 
+    width:100%;  */
+    background-color:#c3c3c3;
+    }
+    #labMapContainer {
+      position: absolute;
+      top:0;
+      left:0;
+      height:100vh; 
+      width:100vw; 
+      background-color:#c3c3c3;
+    }
+
+    #uiContainer{
+      height: 100vh;
+      width: auto;
+      position: absolute;
+      z-index: 9;
+    }
+
+    #PMContainer{
+      height: 15vh;
+      width: auto;
+      position: absolute;
+      z-index: 9;
+      top: 0;
+      right: 0;
+    }
+    .button {
+      fill: #225EA8;
+      stroke: #0C2C84;
+      stroke-width: 0.5;
+      stroke-miterlimit:6;
+      stroke-linecap: round;
+    }
+    .button:hover {
+      stroke-width: 1;
+    }
+    .plus-minus {
+      fill: #fff;
+      pointer-events: none;
+    }
+    .compass {
+      fill: #fff;
+      stroke: #000;
+      stroke-width: 1;
+    }
+  </style>
   <script>
 
     function sanitize(s) {

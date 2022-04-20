@@ -7,6 +7,7 @@ class Table(models.Model):
   table_id = models.IntegerField
   status = models.CharField(max_length=10)
   update_time = models.DateTimeField()
+  room_id = models.IntegerField
 
   def __str__(self):
         return 'Table(id=' + str(self.id) + 'status=' + str(self.status) + ')'
