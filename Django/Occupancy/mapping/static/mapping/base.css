@@ -1,0 +1,59 @@
+.occupied {
+  fill: #D41159;
+  opacity: 1;
+}
+
+.unoccupied {
+  fill: #3EE33A;
+  opacity: 1;
+}
+
+#fullContainer{
+  position: relative;
+  /* height:100%; 
+  width:100%;  */
+  background-color:#c3c3c3;
+}
+#labMapContainer {
+  position: absolute;
+  top:0;
+  left:0;
+  height:100vh; 
+  width:100vw; 
+  background-color:#c3c3c3;
+}
+
+#uiContainer{
+  height: 100vh;
+  width: auto;
+  position: absolute;
+  z-index: 9;
+}
+
+#PMContainer{
+  height: 15vh;
+  width: auto;
+  position: absolute;
+  z-index: 9;
+  top: 0;
+  right: 0;
+}
+.button {
+  fill: #225EA8;
+  stroke: #0C2C84;
+  stroke-width: 0.5;
+  stroke-miterlimit:6;
+  stroke-linecap: round;
+}
+.button:hover {
+  stroke-width: 1;
+}
+.plus-minus {
+  fill: #fff;
+  pointer-events: none;
+}
+.compass {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 1;
+}
