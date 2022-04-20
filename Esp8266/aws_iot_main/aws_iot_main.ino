@@ -1,12 +1,19 @@
+#include <Wire.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 #include <time.h>
 #include "secrets.h"
-#include "DHT.h"
 
-int inputPin = D7;
+
+#define D6T_addr 0x0A
+#define D6T_cmd 0x4C
+#define buflen 16
+
+int PIRIn = D7;
+int SDAIn = D4;
+int SCLIn = D5;
 
 
 String Status = "unoccupied";
@@ -121,19 +128,83 @@ void publishMessage()
 
 //Dummy update for now
 
+uint8_t calc_crc(uint8_t data) {
+    int index;
+    uint8_t temp;
+    for (index = 0; index < 8; index++) {
+        temp = data;
+        data <<= 1;
+        if (temp & 0x80) {data ^= 0x07;}
+    }
+    return data;
+}
 
+/** <!-- D6T_checkPEC {{{ 1--> D6T PEC(Packet Error Check) calculation.
+ * calculate the data sequence,
+ * from an I2C Read client address (8bit) to thermal data end.
+ */
+bool D6T_checkPEC(uint8_t buf[], int n) {
+    int i;
+    uint8_t crc = calc_crc((D6T_addr << 1) | 1);  // I2C Read address (8bit)
+    for (i = 0; i < n; i++) {
+        crc = calc_crc(buf[i] ^ crc);
+    }
+    bool ret = crc != buf[n];
+    if (ret) {
+        Serial.print("PEC check failed:");
+        Serial.print(crc, HEX);
+        Serial.print("(cal) vs ");
+        Serial.print(buf[n], HEX);
+        Serial.println("(get)");
+    }
+    return ret;
+}
 
 void setup()
 {
-  pinMode(inputPin, INPUT);
+  pinMode(PIRIn, INPUT);
+  
+  Wire.begin();
+  Wire.beginTransmission(D6T_addr);  // I2C client address
+  Wire.write(0x02);                  // D6T register
+  Wire.write(0x00);                  // D6T register
+  Wire.write(0x01);                  // D6T register
+  Wire.write(0xEE);                  // D6T register
+  Wire.endTransmission();            // I2C repeated start for read
+  Wire.beginTransmission(D6T_addr);  // I2C client address
+  Wire.write(0x05);                  // D6T register
+  Wire.write(0x90);                  // D6T register
+  Wire.write(0x3A);                  // D6T register
+  Wire.write(0xB8);                  // D6T register
+  Wire.endTransmission();            // I2C repeated start for read
+  Wire.beginTransmission(D6T_addr);  // I2C client address
+  Wire.write(0x03);                  // D6T register
+  Wire.write(0x00);                  // D6T register
+  Wire.write(0x03);                  // D6T register
+  Wire.write(0x8B);                  // D6T register
+  Wire.endTransmission();            // I2C repeated start for read
+  Wire.beginTransmission(D6T_addr);  // I2C client address
+  Wire.write(0x03);                  // D6T register
+  Wire.write(0x00);                  // D6T register
+  Wire.write(0x07);                  // D6T register
+  Wire.write(0x97);                  // D6T register
+  Wire.endTransmission();            // I2C repeated start for read
+  Wire.beginTransmission(D6T_addr);  // I2C client address
+  Wire.write(0x02);                  // D6T register
+  Wire.write(0x00);                  // D6T register
+  Wire.write(0x00);                  // D6T register
+  Wire.write(0xE9);                  // D6T register
+  Wire.endTransmission();            // I2C repeated start for read
+    
   Serial.begin(115200);
-  connectAWS();
+  Serial.flush();
+  //connectAWS();
 
 }
 
 int readDelay = 1000;
 int mintimeBetweenSendingMessages = 5000;
-
+uint8_t buf[buflen];
 int count = 0 ;
 
 void loop()
@@ -141,7 +212,35 @@ void loop()
 
   delay(readDelay);
 
-  int val = digitalRead(inputPin);
+  memset(buf, 0, buflen);
+  Wire.beginTransmission(D6T_addr);
+  Wire.write(D6T_cmd);
+  Wire.endTransmission();
+
+  Serial.println("New read beginning");
+
+  // Read
+  Wire.requestFrom(D6T_addr, buflen);
+
+  int i=0;
+  while (Wire.available()) {
+    Serial.print("Value:");
+    Serial.println(i);
+    Serial.println(Wire.read());
+    //Serial.print(buf[i] + ",");
+    //Serial.println("");
+    //rbuf[i] = Wire.read();
+    i++;
+    }
+
+  Serial.println("");
+
+  if (D6T_checkPEC(buf, buflen - 1)) {
+      return;
+    }
+
+/*
+  int val = digitalRead(PIRIn);
   if (val == HIGH) {
     oldstatus = Status;
     Status = "occupied";
@@ -158,6 +257,7 @@ void loop()
     readDelay = 1000;
   }
 
+
   if (oldstatus != Status) {
     if (!client.connected())
     {
@@ -170,15 +270,13 @@ void loop()
       publishMessage();
     }
   }
-
-
-
+  
   Serial.print(F("   Count: #"));
   Serial.print(count);
   Serial.print(F("  Status: "));
   Serial.println(Status);
 
-
+*/
 
 
 
