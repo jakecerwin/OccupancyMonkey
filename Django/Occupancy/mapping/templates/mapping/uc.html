@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {% load static %}
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="{% static 'mapping/base.css' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <title></title>
+
+  <!-- <style>
+    #fullContainer{
+    position: relative;
+    /* height:100%; 
+    width:100%;  */
+    background-color:#c3c3c3;
+    }
+    #labMapContainer {
+      position: absolute;
+      top:0;
+      left:0;
+      height:100vh; 
+      width:100vw; 
+      background-color:#c3c3c3;
+    }
+
+    #uiContainer{
+      height: 100vh;
+      width: auto;
+      position: absolute;
+      z-index: 9;
+    }
+
+    #PMContainer{
+      height: 15vh;
+      width: auto;
+      position: absolute;
+      z-index: 9;
+      top: 0;
+      right: 0;
+    }
+    .button {
+      fill: #225EA8;
+      stroke: #0C2C84;
+      stroke-width: 0.5;
+      stroke-miterlimit:6;
+      stroke-linecap: round;
+    }
+    .button:hover {
+      stroke-width: 1;
+    }
+    .plus-minus {
+      fill: #fff;
+      pointer-events: none;
+    }
+    .compass {
+      fill: #fff;
+      stroke: #000;
+      stroke-width: 1;
+    }
+  </style> -->
+  <script>
+
+    function sanitize(s) {
+      // Be sure to replace ampersand first
+      return s.replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+    }
+
+    function convertToSlug(Text) {
+      return Text
+        .replace(/:/g, '-colon-')
+        .replace(/\)/g, '-rparanthesis-')
+        .replace(/\(/g, '-lparanthesis-')
+        .replace(/ /g, '-space-')
+        .replace(/\^/g, '-carrot-')
+        ;
+    }
+
+    function displayError(message) {
+      let errorElement = document.getElementById("error")
+      errorElement.innerHTML = message
+    }
+
+    function getstatus() {
+      let xhr = new XMLHttpRequest()
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState != 4) return
+        loadPage(xhr)
+      }
+
+      xhr.open("GET", "/get-status", true)
+      xhr.send()
+    }
+
+
+    function loadPage(xhr) {
+      if (xhr.status == 200) {
+        let response = JSON.parse(xhr.responseText)
+        loadStatus(response)
+        return
+      }
+
+      if (xhr.status == 0) {
+        displayError("Cannot connect to server")
+        return
+      }
+
+
+      if (!xhr.getResponseHeader('content-type') == 'application/json') {
+        displayError("Received status=" + xhr.status)
+        return
+      }
+
+      let response = JSON.parse(xhr.responseText)
+      if (response.hasOwnProperty('error')) {
+        displayError(response.error)
+        return
+      }
+
+      displayError(response)
+    }
+
+    function loadStatus(items) {
+      let list = document.getElementById("table_list")
+      while (list.hasChildNodes()) {
+        list.removeChild(list.firstChild)
+      }
+      list.style.display = "none";
+
+      $(items).each(function () {
+        let id = "table_" + this.table;
+        if (document.getElementById(id) == null) {
+          $("#table_list").prepend(
+            "<li>" +
+            "table id" + this.table + " : " + this.status +
+            "</li>"
+          )
+          var tableOccupied = document.getElementById(this.table+"-occupied");
+          var tableAvailable = document.getElementById(this.table+"-available");
+          if (this.status == "occupied") {
+            tableOccupied.style.display = "block";
+            tableAvailable.style.display = "none";
+          }
+          else if (this.status == "unoccupied") {
+            tableOccupied.style.display = "none";
+            tableAvailable.style.display = "block";
+          }
+        }
+      })
+    }
+
+    function test_post() {
+      //var commentText = document.getElementById("id_comment_input_text_" + id)
+      //let itemTextElement = document.getElementById("id_comment_input_text_" + id)
+      //let itemTextValue   = itemTextElement.value
+
+      let xhr = new XMLHttpRequest()
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState != 4) return
+
+      }
+
+      xhr.open("POST", "/data", true);
+      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhr.send("table_id=1" + "&status=occupied");
+      //xhr.send("text=" + itemTextValue + "&id=" + id + "&csrfmiddlewaretoken=" + getCSRFToken());
+    }
+  </script>
+</head>
+<body>
+  <div class="heading">
+    <h1 class="header-text">OCCUPANCY MONKEY</h1>
+    <a href="{% url 'mapping-lab' %}">ECE Lab</a>
+    <a class="active" href="{% url 'mapping-uc2' %}">UC 2nd Floor</a>
+  </div>
+  <!-- <div>
+    <h1>This is our demo page</h1>
+    <p1>Time until next refresh:</p1>
+    <input id="timer" value=5></input>
+  </div> -->
+   <!-- <div>
+    <button type="Submit" onclick='test_post()'>test data </button>
+    <button type="Submit" onclick='getstatus()'>Get status </button>
+  </div> -->
+  <div>
+    <ul class='table_list' id='table_list'></ul>
+  </div>
+
+  <div id="fullContainer">
+    <div id="labMapContainer">
+    </div>
+    <div id="uiContainer">
+    </div>
+    <div id="PMContainer">
+      <svg viewBox="0 0 100 100" width="100%" height="100%
+        "preserveAspectRatio="xMidYMid meet">
+        <circle class="button" onclick="zoom(1.25)" cx="18.5" cy="18.5" r="18.5" fill="#7A778E"/>
+        <path class="plus-minus" d="M17.0645 25.6151V11.2116H19.9302V25.6151H17.0645ZM11.301 19.8409V16.9751H25.7044V19.8409H11.301Z" fill="#F8F8F8"/>
+        <circle class="button" onclick="zoom(0.8)" cx="18.5" cy="67.5" r="18.5" fill="#7A778E"/>
+        <path class="plus-minus" d="M23.3393 65.3999V68.1591H13.666V65.3999H23.3393Z" fill="#F8F8F8"/>
+      </svg>
+    </div>
+  </div>
+  <script type="text/javascript">
+    var transformMatrix = [1, 0, 0, 1, 0, 0];
+    var svg = document.getElementById('map-svg');
+    var viewbox = svg.getAttributeNS(null, "viewBox").split(" ");
+    var centerX = parseFloat(viewbox[2]) / 2;
+    var centerY = parseFloat(viewbox[3]) / 2;
+    var mouseX = centerX;
+    var mouseY = centerY;
+    var matrixGroup = svg.getElementById("matrix-group");
+    document.getElementById("labMapContainer").addEventListener("wheel", scrollZoom);
+    document.getElementById("labMapContainer").addEventListener("mousedown", dragStart);
+    document.getElementById("labMapContainer").addEventListener("mouseup", dragPan);
+    function mouse_position()
+    {
+      var e = window.event;
+
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      // var t = setTimeout(mouse_position,100);
+    }
+
+    function pan(dx, dy) {
+      transformMatrix[4] += dx;
+      transformMatrix[5] += dy;
+      setMatrix();
+    }
+
+    function dragPan(event) {
+      if (event.button == 0) {
+        // alert("help");
+        var dx = event.clientX - mouseX;
+        var dy = event.clientY - mouseY;
+        transformMatrix[4] += dx;
+        transformMatrix[5] += dy;
+        setMatrix();
+      }
+    }
+    function dragStart(event) {
+      mouse_position();
+    }
+    function scrollZoom(event) {
+      event.preventDefault();
+      // mouse_position();
+
+      if (event.deltaY < 0) {
+        scale = 1.25;
+      }
+      else {
+        scale = 0.8;
+      }
+      for (var i = 0; i < 6; i++) {
+        transformMatrix[i] *= scale;
+      }
+
+      transformMatrix[4] += (1 - scale) * centerX;
+      transformMatrix[5] += (1 - scale) * centerY;
+      setMatrix();
+    }
+    function zoom(scale) {
+      for (var i = 0; i < 6; i++) {
+        transformMatrix[i] *= scale;
+      }
+
+      transformMatrix[4] += (1 - scale) * centerX;
+      transformMatrix[5] += (1 - scale) * centerY;
+      setMatrix();
+    }
+
+    function setMatrix() {
+      var newMatrix = "matrix(" +  transformMatrix.join(' ') + ")";
+      matrixGroup.setAttributeNS(null, "transform", newMatrix);
+    }
+  </script>
+  
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+
+
+  <script>
+    var interval = 1000; // ms
+    var step = 100; //ms
+    window.onload = getstatus;
+    //window.setInterval(getstatus, interval);
+
+
+    function timer() {
+      // the drift (positive for overshooting)
+
+      var t = parseInt(parseFloat(document.getElementById("timer").value) * 1000);
+      if ((t - step) > 0) {
+        document.getElementById("timer").value = ((t - step) / 1000);
+      } else {
+        document.getElementById("timer").value = interval / 1000;
+        getstatus()
+      }
+
+
+    }
+
+    window.setInterval(timer, step);
+
+  </script>
+
+</body>
+
+</html>

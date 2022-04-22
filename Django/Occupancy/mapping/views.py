@@ -25,8 +25,11 @@ def _my_json_error_response(message, status=200):
 def home(request):
   return render(request, 'mapping/mapping.html')
 
-def test(request):
-  return render(request, 'mapping/mapTest.html')
+def lab(request):
+  return render(request, 'mapping/lab.html')
+
+def uc(request):
+  return render(request, 'mapping/uc.html')
 
 def get_status(request):
   response_data = [] 
