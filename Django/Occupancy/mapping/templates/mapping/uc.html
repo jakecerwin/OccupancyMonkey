@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  {% load static %}
+  <!-- {% load static %} -->
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -10,63 +10,153 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="{% static 'mapping/base.css' %}">
+  <!-- <link rel="stylesheet" type="text/css" href="{% static 'mapping/base.css' %}"> -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
   <title></title>
 
-  <!-- <style>
-    #fullContainer{
-    position: relative;
-    /* height:100%; 
-    width:100%;  */
-    background-color:#c3c3c3;
-    }
-    #labMapContainer {
-      position: absolute;
-      top:0;
-      left:0;
-      height:100vh; 
-      width:100vw; 
-      background-color:#c3c3c3;
-    }
+  <style>
+   .heading{
+  height: 8%;
+  width: 100vw;
+  background-color: white;
+  overflow: hidden;
+  border-bottom: #9a95b15c;
+  border-bottom-style: solid;
+  border-bottom-width: 1.5%;
+}
+.header-text{
+  margin-left: 5vw;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 700;
+  font-size: 30;
+}
+.heading a{
+  float: left;
+  color: #9A95B1;
+  text-align: center;
+  margin-left: 5vw;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 15;
+}
+.heading a.active{
+  margin-left: 5vw;
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #403C57;
+  font-weight: 400;
+  font-size: 15;
+  padding-bottom: 0.75vh;
+  border-bottom: #ADA1EB;
+  border-bottom-style: solid;
+  border-bottom-width: 1.5%;
+}
 
-    #uiContainer{
-      height: 100vh;
-      width: auto;
-      position: absolute;
-      z-index: 9;
-    }
+/* CONTAINERS */
+#fullContainer{
+  position: relative;
+  height:90vh; 
+  width:100vw; 
+  background-color:#f7f7f9;
+}
+#labMapContainer {
+  position: absolute;
+  top:0;
+  left:0;
+  height:100%; 
+  width:80vw; 
+  background-color:#f7f7f9;
+}
 
-    #PMContainer{
-      height: 15vh;
-      width: auto;
-      position: absolute;
-      z-index: 9;
-      top: 0;
-      right: 0;
-    }
-    .button {
-      fill: #225EA8;
-      stroke: #0C2C84;
-      stroke-width: 0.5;
-      stroke-miterlimit:6;
-      stroke-linecap: round;
-    }
-    .button:hover {
-      stroke-width: 1;
-    }
-    .plus-minus {
-      fill: #fff;
-      pointer-events: none;
-    }
-    .compass {
-      fill: #fff;
-      stroke: #000;
-      stroke-width: 1;
-    }
-  </style> -->
+#uiContainer{
+  height: 100%;
+  width: 20vw;
+  position: absolute;
+  background-color: #757189e8;
+  right:0;
+  z-index: 9;
+}
+
+#PMContainer{
+  height: 15vh;
+  width: auto;
+  position: absolute;
+  z-index: 9;
+  top: 80%;
+  left: 2vw;
+}
+
+/* INPUT */
+#search {
+  /* display:inline-block; */
+  width: 100%;
+  height: 20%;
+  white-space: nowrap;
+  overflow-x: auto;
+  position: relative;
+  text-align: center;
+}
+.searchChild {
+  position: absolute;
+  display: inline-block;
+}
+input[type=text] {
+  padding: 4% 5%;
+  top: 20%;
+  left: 15%;
+  width: 70%;
+  height: 4%;
+  border-radius: 5px;
+  border-width: 0;
+  background-color: #B5B3C6;
+}
+input[type=reset] {
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #F8F8F8;
+  padding: 4% 5% 10% 5%;
+  top: 13%;
+  left: 75%;
+  width: 20%;
+  height: 4%;
+  border-radius: 5px;
+  border-width: 0;
+  outline: none;
+  background-color: rgba(255, 255, 255, 0);
+}
+input[type=text]:focus {
+  position: absolute;
+  padding: 4% 5%;
+  top: 20%;
+  left: 15%;
+  width: 60%;
+  height: 4%;
+  border-radius: 5px;
+  border-width: 0;
+  outline: none;
+  background-color: #B5B3C6;
+}
+input[type=text]:value {
+  padding: 2% 2%;
+  margin: 10% 13%;
+  width: 60%;
+  height: 4%;
+  border-radius: 5px;
+  border-width: 0;
+  outline: none;
+  background-color: #B5B3C6;
+}
+::placeholder {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 10;
+  color: #F8F8F8;
+
+}
+.plus-minus {
+  pointer-events: none;
+}
+  </style>
   <script>
 
     function sanitize(s) {
