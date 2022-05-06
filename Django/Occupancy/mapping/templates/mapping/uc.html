@@ -511,6 +511,13 @@
       var totalOpen = 0;
       var occupiedDeg = 0.0;
       var unoccupiedDeg = 0.0;
+      var totalTablesOpen = 1;
+      if (document.getElementById("RoomLabel").innerText == "UC 2nd Floor"){
+        totalTablesOpen = 70;
+      }
+      else {
+        totalTablesOpen = 25;
+      }
 
       $(items).each(function () {
         let id = "table_" + this.table;
@@ -528,9 +535,9 @@
           }
         }
       })
-      totalOpen += 25;
+      totalOpen += totalTablesOpen;
       document.getElementById("NumberAvailable").innerText = totalOpen;
-      unoccupiedDeg = 360.0 * (totalOpen / (29 * 1.0));
+      unoccupiedDeg = 360.0 * (totalOpen / ((totalTablesOpen + 4) * 1.0));
       occupiedDeg = 360.0 - unoccupiedDeg;
       // alert(unoccupiedDeg);
       document.getElementById("piechart").style.backgroundImage = "conic-gradient(" + 
