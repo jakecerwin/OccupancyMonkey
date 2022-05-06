@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <!-- {% load static %} -->
+  {% load static %}
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -10,13 +10,13 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <!-- <link rel="stylesheet" type="text/css" href="{% static 'mapping/base.css' %}"> -->
+  <link rel="stylesheet" type="text/css" href="{% static 'mapping/base.css' %}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
   <title></title>
 
-  <style>
+  <!-- <style>
     #page {
   height: 100vh;
   display: flex;
@@ -227,7 +227,7 @@ input[type=text]:focus {
 }
 
 
-  </style>
+  </style> -->
   <script>
 
     function sanitize(s) {
@@ -348,9 +348,11 @@ input[type=text]:focus {
       <p id="description">a simple seating solution</p>
     </div>
     <input style="visibility:hidden;" id="timer" value=5></input>
-    <a href="{% url 'mapping-lab' %}">ECE Lab</a>
-    <a class="active" href="{% url 'mapping-uc2' %}">UC 2nd Floor</a>
-    <a href="{% url 'mapping-demo' %}">Demo</a>
+    <div id="tab">
+      <a href="{% url 'mapping-lab' %}">ECE Lab</a>
+      <a class="active" href="{% url 'mapping-uc2' %}">UC 2nd Floor</a>
+      <a href="{% url 'mapping-demo' %}">Demo</a>
+    </div>
   </div>
 
   <div id="fullContainer">
@@ -981,10 +983,28 @@ input[type=text]:focus {
     var matrixGroup = svg.getElementById("matrix-group");
     var totalZoom = 1.0;
     document.getElementById("labMapContainer").addEventListener("wheel", scrollZoom);
-    document.getElementById("labMapContainer").addEventListener("mousedown", dragStart);
-    document.getElementById("labMapContainer").addEventListener("mouseup", dragEnd);
-    document.getElementById("labMapContainer").addEventListener("mousemove", dragPan);
+    document.getElementById("labMapContainer").addEventListener("pointerdown", dragStart);
+    document.getElementById("labMapContainer").addEventListener("pointerup", dragEnd);
+    document.getElementById("labMapContainer").addEventListener("pointermove", dragPan);
     var isDrag = false;
+    function disableScroll() {
+        // Get the current page scroll position
+        scrollTop = 
+          window.pageYOffset || document.documentElement.scrollTop;
+        scrollLeft = 
+          window.pageXOffset || document.documentElement.scrollLeft,
+
+            // if any scroll is attempted,
+            // set this to the previous value
+            window.onscroll = function() {
+                window.scrollTo(scrollLeft, scrollTop);
+            };
+    }
+
+    function enableScroll() {
+        window.onscroll = function() {};
+    }
+
     function mouse_position()
     {
       var e = window.event;
@@ -1013,6 +1033,8 @@ input[type=text]:focus {
       }
     }
     function dragStart(event) {
+      event.preventDefault();
+      // disableScroll();
       mouse_position();
       isDrag = true;
     }
