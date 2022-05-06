@@ -31,6 +31,9 @@ def lab(request):
 def uc(request):
   return render(request, 'mapping/uc.html')
 
+def demo(request):
+  return render(request, 'mapping/demo.html')
+
 def get_status(request):
   response_data = [] 
   items = Table.objects.all()

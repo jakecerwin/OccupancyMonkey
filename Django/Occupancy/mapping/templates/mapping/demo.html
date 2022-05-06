@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- {% load static %} -->
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <!-- <link rel="stylesheet" type="text/css" href="{% static 'mapping/base.css' %}"> -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <title></title>
+
+  <style>
+    #page {
+  height: 100vh;
+  display: flex;
+  flex-flow: column;
+  align-items: stretch;
+}
+
+/* HEADING */
+#heading {
+  display: flex;
+  align-items: center;
+
+}
+#description {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  margin-top: 4vh;
+  margin-left: 1vw;
+}
+.headingBar{
+  /* height: 18vh; */
+  flex: 0 1 auto;
+  width: 100vw;
+  background-color: white;
+  overflow: hidden;
+  border-bottom: #9a95b15c;
+  border-bottom-style: solid;
+  border-bottom-width: 1.5%;
+}
+.header-text{
+  margin-left: 5%;
+  margin-top: 1vh;;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 700;
+  font-size: 30;
+}
+.headingBar a{
+  float: left;
+  color: #9A95B1;
+  text-align: center;
+  margin-left: 5vw;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 15;
+}
+.headingBar a.active{
+  margin-left: 5%;
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #403C57;
+  font-weight: 400;
+  font-size: 15;
+  padding-bottom: 0.75vh;
+  border-bottom: #ADA1EB;
+  border-bottom-style: solid;
+  border-bottom-width: 1.5%;
+}
+
+/* CONTAINERS */
+#fullContainer{
+  flex: 1 0 0;
+  display: flex;
+  width:100%; 
+  background-color:pink;
+  overflow: hidden;
+}
+#labMapContainer {
+  height:100%; 
+  width:80%; 
+  background-color:#f7f7f9;
+}
+
+#uiContainer{
+  flex: 1;
+  background-color: #757189e8;
+  z-index: 9;
+  overflow: hidden;
+}
+
+#PMContainer{
+  height: 15vh;
+  width: auto;
+  position: absolute;
+  z-index: 9;
+  top: 80%;
+  left: 2vw;
+}
+
+/* STATS */
+#stats {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: center;
+}
+#piechart {
+  display: block;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  /* background-image: conic-gradient(
+      pink 70deg, 
+      lightblue 0 290deg); */
+}
+.dot {
+  flex: 1 0 auto;
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  display: inline-block;
+}
+#dotA {
+  background-color: #ADA1EB;
+}
+#dotO {
+  background-color: #E3E3E3;
+}
+.legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#RoomLabel {
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #F8F8F8;
+  font-weight: 700;
+  font-size: 25;
+}
+.regText {
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #F8F8F8;
+  font-weight: 400;
+  font-size: 25;
+}
+
+/* INPUT */
+#search {
+  /* display:inline-block; */
+  /* width: 100%; */
+  height: 15%;
+  white-space: nowrap;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+input[type=text] {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 20;
+  color: #F8F8F8;
+  padding: 4% 5%;
+  width: 70%;
+  height: 4%;
+  border-radius: 5px;
+  border-width: 0;
+  background-color: #B5B3C6;
+}
+#cancel {
+  flex: 0 1 0;
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #F8F8F8;
+  border-width: 0;
+  outline: none;
+  background-color: rgba(255, 255, 255, 0);
+}
+input[type=text]:focus {
+  flex: 1 1 auto;
+  padding: 4% 5%;
+  width: 60%;
+  height: 4%;
+  border-radius: 5px;
+  border-width: 0;
+  outline: none;
+  background-color: #B5B3C6;
+}
+::placeholder {
+  /* font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 5; */
+  color: #F8F8F8;
+
+}
+.plus-minus {
+  pointer-events: none;
+}
+
+#roomList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+#roomList li a {
+  border-radius: 5px;
+  border-width: 0;
+  outline: none;
+  margin-top: 2%;
+  background-color: #87839F;
+  padding: 12px;
+  text-decoration: none;
+  font-size: 18px;
+  color: #F8F8F8;
+  display: block
+}
+
+#roomList li a:hover:not(.header) {
+  background-color: #ADA1EB;
+}
+
+
+  </style>
+  <script>
+
+    function sanitize(s) {
+      // Be sure to replace ampersand first
+      return s.replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+    }
+
+    function convertToSlug(Text) {
+      return Text
+        .replace(/:/g, '-colon-')
+        .replace(/\)/g, '-rparanthesis-')
+        .replace(/\(/g, '-lparanthesis-')
+        .replace(/ /g, '-space-')
+        .replace(/\^/g, '-carrot-')
+        ;
+    }
+
+    function displayError(message) {
+      let errorElement = document.getElementById("error")
+      errorElement.innerHTML = message
+    }
+
+    function getstatus() {
+      let xhr = new XMLHttpRequest()
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState != 4) return
+        loadPage(xhr)
+      }
+
+      xhr.open("GET", "/get-status", true)
+      xhr.send()
+    }
+
+
+    function loadPage(xhr) {
+      if (xhr.status == 200) {
+        let response = JSON.parse(xhr.responseText)
+        loadStatus(response)
+        return
+      }
+
+      if (xhr.status == 0) {
+        displayError("Cannot connect to server")
+        return
+      }
+
+
+      if (!xhr.getResponseHeader('content-type') == 'application/json') {
+        displayError("Received status=" + xhr.status)
+        return
+      }
+
+      let response = JSON.parse(xhr.responseText)
+      if (response.hasOwnProperty('error')) {
+        displayError(response.error)
+        return
+      }
+
+      displayError(response)
+    }
+
+    function loadStatus(items) {
+      var totalOpen = 0;
+      var occupiedDeg = 0.0;
+      var unoccupiedDeg = 0.0;
+
+      $(items).each(function () {
+        let id = "table_" + this.table;
+        if (document.getElementById(id) == null) {
+          var tableOccupied = document.getElementById(this.table+"-occupied");
+          var tableAvailable = document.getElementById(this.table+"-available");
+          if (this.status == "occupied") {
+            tableOccupied.style.display = "block";
+            tableAvailable.style.display = "none";
+          }
+          else if (this.status == "unoccupied") {
+            totalOpen++;
+            tableOccupied.style.display = "none";
+            tableAvailable.style.display = "block";
+          }
+        }
+      })
+      document.getElementById("NumberAvailable").innerText = totalOpen;
+      unoccupiedDeg = 360.0 * (totalOpen / (items.length * 1.0));
+      occupiedDeg = 360.0 - unoccupiedDeg;
+      // alert(unoccupiedDeg);
+      document.getElementById("piechart").style.backgroundImage = "conic-gradient(" + 
+      "#ADA1EB " + unoccupiedDeg + "deg, #E3E3E3 0 " + occupiedDeg + "deg)";
+    }
+
+    function test_post() {
+      //var commentText = document.getElementById("id_comment_input_text_" + id)
+      //let itemTextElement = document.getElementById("id_comment_input_text_" + id)
+      //let itemTextValue   = itemTextElement.value
+
+      let xhr = new XMLHttpRequest()
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState != 4) return
+
+      }
+
+      xhr.open("POST", "/data", true);
+      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhr.send("table_id=1" + "&status=occupied");
+      //xhr.send("text=" + itemTextValue + "&id=" + id + "&csrfmiddlewaretoken=" + getCSRFToken());
+    }
+    
+  </script>
+</head>
+<body>
+  <div id="page">
+  <div class="headingBar">
+    <div id="heading">
+      <h1 class="header-text">OCCUPANCY MONKEY</h1>
+      <p id="description">a simple seating solution</p>
+    </div>
+    <input style="visibility:hidden;" id="timer" value=5></input>
+    <a href="{% url 'mapping-lab' %}">ECE Lab</a>
+    <a href="{% url 'mapping-uc2' %}">UC 2nd Floor</a>
+    <a class="active" href="{% url 'mapping-demo' %}">Demo</a>
+  </div>
+
+  <div id="fullContainer">
+    <div id="labMapContainer">
+      <svg width="100%" height="100%" viewBox="0 0 550 350" fill="none" xmlns="http://www.w3.org/2000/svg" 
+        preserveAspectRatio="xMidYMid meet" id="map-svg">
+        <g id="matrix-group" transform="matrix(1 0 0 1 0 0)">
+          <rect width="1201" height="616" fill="#F7F7F9"/>
+          <mask id="path-1-inside-1_196_127" fill="white">
+          <rect x="154" y="79" width="893" height="458" rx="2"/>
+          </mask>
+
+          <rect id="Demo" x="154" y="79" width="893" height="458" rx="2" fill="white" stroke="#D3D7E0" stroke-width="6" stroke-linejoin="round" mask="url(#path-1-inside-1_196_127)"/>
+          
+          <g id="0-occupied">
+            <rect x="602.931" y="317.552" width="55.3522" height="98.7608" rx="2" transform="rotate(-90 602.931 317.552)" fill="#E3E3E3"/>
+            <line x1="0.5" y1="-0.5" x2="108.36" y2="-0.5" transform="matrix(0.872332 0.488914 -0.407367 0.913264 604.83 264.329)" stroke="#B5B2C6" stroke-linecap="round"/>
+            <line x1="0.5" y1="-0.5" x2="110.021" y2="-0.5" transform="matrix(0.876409 -0.481567 0.400673 0.916221 604.83 317.552)" stroke="#B5B2C6" stroke-linecap="round"/>
+          </g>
+          
+          <rect id="0-available" x="602.931" y="317.552" width="55.3522" height="98.7608" rx="3" transform="rotate(-90 602.931 317.552)" fill="#ADA1EB"/>
+
+          <g id="1-occupied">
+          <rect x="500.372" y="317.552" width="55.3522" height="98.7608" rx="2" transform="rotate(-90 500.372 317.552)" fill="#E3E3E3"/>
+          <line x1="0.5" y1="-0.5" x2="108.36" y2="-0.5" transform="matrix(0.872332 0.488914 -0.407367 0.913264 502.271 264.329)" stroke="#B5B2C6" stroke-linecap="round"/>
+          <line x1="0.5" y1="-0.5" x2="110.021" y2="-0.5" transform="matrix(0.876409 -0.481567 0.400673 0.916221 502.271 317.552)" stroke="#B5B2C6" stroke-linecap="round"/>
+          </g>
+          <rect id="1-available" x="500.372" y="317.552" width="55.3522" height="98.7608" rx="3" transform="rotate(-90 500.372 317.552)" fill="#ADA1EB"/>
+
+          <g id="2-occupied">
+          <rect x="705.49" y="317.552" width="55.3522" height="98.7608" rx="2" transform="rotate(-90 705.49 317.552)" fill="#E3E3E3"/>
+          <line x1="0.5" y1="-0.5" x2="108.36" y2="-0.5" transform="matrix(0.872332 0.488914 -0.407367 0.913264 707.39 264.329)" stroke="#B5B2C6" stroke-linecap="round"/>
+          <line x1="0.5" y1="-0.5" x2="110.021" y2="-0.5" transform="matrix(0.876409 -0.481567 0.400673 0.916221 707.39 317.552)" stroke="#B5B2C6" stroke-linecap="round"/>
+          </g>
+          <rect id="2-available" x="705.49" y="317.552" width="55.3522" height="98.7608" rx="3" transform="rotate(-90 705.49 317.552)" fill="#ADA1EB"/>
+
+          <rect id="3-available" x="397.812" y="317.552" width="55.3522" height="98.7608" rx="3" transform="rotate(-90 397.812 317.552)" fill="#ADA1EB"/>
+          <g id="3-occupied">
+          <rect x="397.812" y="317.552" width="55.3522" height="98.7608" rx="2" transform="rotate(-90 397.812 317.552)" fill="#E3E3E3"/>
+          <line x1="0.5" y1="-0.5" x2="108.36" y2="-0.5" transform="matrix(0.872332 0.488914 -0.407367 0.913264 399.712 264.329)" stroke="#B5B2C6" stroke-linecap="round"/>
+          <line x1="0.5" y1="-0.5" x2="110.021" y2="-0.5" transform="matrix(0.876409 -0.481567 0.400673 0.916221 399.712 317.552)" stroke="#B5B2C6" stroke-linecap="round"/>
+          </g>
+
+          <path d="M437.469 335.98C442.042 335.98 445.781 339.839 445.781 344.64C445.781 349.441 442.042 353.3 437.469 353.3C432.896 353.3 429.156 349.441 429.156 344.64C429.156 339.839 432.896 335.98 437.469 335.98Z" stroke="#B7B4C8"/>
+          <path d="M541.927 335.98C546.5 335.98 550.24 339.839 550.24 344.64C550.24 349.441 546.5 353.3 541.927 353.3C537.355 353.3 533.615 349.441 533.615 344.64C533.615 339.839 537.355 335.98 541.927 335.98Z" stroke="#B7B4C8"/>
+          <path d="M644.486 335.98C649.059 335.98 652.799 339.839 652.799 344.64C652.799 349.441 649.059 353.3 644.486 353.3C639.914 353.3 636.174 349.441 636.174 344.64C636.174 339.839 639.914 335.98 644.486 335.98Z" stroke="#B7B4C8"/>
+          <path d="M747.046 335.98C751.619 335.98 755.358 339.839 755.358 344.64C755.358 349.441 751.619 353.3 747.046 353.3C742.473 353.3 738.733 349.441 738.733 344.64C738.733 339.839 742.473 335.98 747.046 335.98Z" stroke="#B7B4C8"/>
+        </g>
+        </svg>
+    </div>
+
+    <div id="uiContainer">
+      <div id="search">
+        <input id="searchInput" type="text" placeholder="Search sections...">
+        <button style="display: none;" id="cancel">Cancel</button>
+      </div>
+      <div id="stats">
+        <p id="RoomLabel">Live Demo</p>
+        <p class="regText"><strong id="NumberAvailable"></strong> table(s) open</p>
+        <g id="piechart"></g>
+        <div class="legend">
+          <span class="dot" id="dotA"></span>
+          <p style="margin-top: 15%; margin-left: 10%;" class="regText">Available</p>
+        </div>
+        <div class="legend">
+          <span class="dot" id="dotO"></span>
+          <p style="margin-top: 15%; margin-left: 10%;" class="regText">Occupied</p>
+        </div>
+      </div>
+    </div>
+    <div id="PMContainer">
+      <svg viewBox="0 0 100 100" width="100%" height="100%
+        "preserveAspectRatio="xMidYMid meet">
+        <circle class="button" onclick="zoom(1.25)" cx="18.5" cy="18.5" r="18.5" fill="#7A778E"/>
+        <path class="plus-minus" d="M17.0645 25.6151V11.2116H19.9302V25.6151H17.0645ZM11.301 19.8409V16.9751H25.7044V19.8409H11.301Z" fill="#F8F8F8"/>
+        <circle class="button" onclick="zoom(0.8)" cx="18.5" cy="67.5" r="18.5" fill="#7A778E"/>
+        <path class="plus-minus" d="M23.3393 65.3999V68.1591H13.666V65.3999H23.3393Z" fill="#F8F8F8"/>
+      </svg>
+    </div>
+  </div>
+  <!-- Script for pan and zoom and zoom to section -->
+  <script type="text/javascript">
+    var transformMatrix = [1, 0, 0, 1, 0, 0];
+    var svg = document.getElementById('map-svg');
+    var viewbox = svg.getAttributeNS(null, "viewBox").split(" ");
+    var centerX = parseFloat(viewbox[2]) / 2;
+    var centerY = parseFloat(viewbox[3]) / 2;
+    var matrixGroup = svg.getElementById("matrix-group");
+    var totalZoom = 1.0;
+    document.getElementById("labMapContainer").addEventListener("wheel", scrollZoom);
+    var isDrag = false;
+    function scrollZoom(event) {
+      event.preventDefault();
+      // mouse_position();
+
+      if (event.deltaY < 0) {
+        scale = 1.25;
+      }
+      else {
+        scale = 0.8;
+      }
+      zoom(scale);
+    }
+    function zoom(scale) {
+      if ((totalZoom < 0.5 && scale < 1) || (totalZoom > 2 && scale > 1)) {
+        return;
+      } 
+      totalZoom *= scale;
+      for (var i = 0; i < 6; i++) {
+        transformMatrix[i] *= scale;
+      }
+
+      transformMatrix[4] += (1 - scale) * centerX;
+      transformMatrix[5] += (1 - scale) * centerY;
+      setMatrix();
+    }
+
+    function setMatrix() {
+      var newMatrix = "matrix(" +  transformMatrix.join(' ') + ")";
+      matrixGroup.setAttributeNS(null, "transform", newMatrix);
+    }
+    // translate page to SVG coordinate
+    function svgPoint(x, y) {
+
+      const pt = svg.createSVGPoint();
+      pt.x = x;
+      pt.y = y;
+
+      return pt.matrixTransform( svg.getScreenCTM().inverse() );
+
+    }
+
+    function selectRoom(section) {
+      zoom((1.0/totalZoom));
+      totalZoom = 1.0;
+      var rect = document.getElementById(section).getBoundingClientRect();
+      var rCenterX = (rect.left + rect.right) / 2.0;
+      var rCenterY = (rect.top + rect.bottom) / 2.0;
+      var svgrCenter = svgPoint(rCenterX, rCenterY);
+      transformMatrix[4] += (centerX - svgrCenter.x);
+      transformMatrix[5] += (centerY - svgrCenter.y);
+      setMatrix();
+    }
+  </script>
+  <!-- Script for Search -->
+  <script type="text/javascript">
+    const search = document.querySelector('input[type="text"]');
+    search.addEventListener("focus", (event) => {
+      document.getElementById("cancel").style.display = "";
+      document.getElementById("roomList").style.display = "";
+      document.getElementById("stats").style.display = "none";
+    });
+    search.addEventListener("blur", (event) => {
+      document.getElementById("searchInput").value = '';
+      document.getElementById("cancel").style.display = "none";
+      setTimeout(function(){hide("roomList");}, 100);
+    });
+    function hide(element) {
+      document.getElementById(element).style.display='none';
+      document.getElementById("stats").style.display = "";
+    }
+  </script>
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+
+
+  <script>
+    var interval = 1000; // ms
+    var step = 100; //ms
+    window.onload = initialLoad;
+    //window.setInterval(getstatus, interval);
+
+
+    function timer() {
+      // the drift (positive for overshooting)
+
+      var t = parseInt(parseFloat(document.getElementById("timer").value) * 1000);
+      if ((t - step) > 0) {
+        document.getElementById("timer").value = ((t - step) / 1000);
+      } else {
+        document.getElementById("timer").value = interval / 1000;
+        getstatus()
+      }
+
+    }
+    setInterval(function(){checkMajority();}, 500);
+
+    window.setInterval(timer, step);
+
+    function initialLoad() {
+      selectRoom("Demo");
+      getstatus();
+    }
+    
+  </script>
+  <script>
+    
+  </script>
+</div>
+</body>
+
+</html>
