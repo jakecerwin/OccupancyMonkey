@@ -68,6 +68,7 @@
     /* overflow: hidden; */
   }
   #labMapContainer {
+    touch-action: none;
     height:100%; 
     width:100%; 
     background-color:#f7f7f9;
