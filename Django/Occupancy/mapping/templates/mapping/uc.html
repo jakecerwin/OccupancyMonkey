@@ -528,8 +528,9 @@
           }
         }
       })
+      totalOpen += 25;
       document.getElementById("NumberAvailable").innerText = totalOpen;
-      unoccupiedDeg = 360.0 * (totalOpen / (items.length * 1.0));
+      unoccupiedDeg = 360.0 * (totalOpen / (29 * 1.0));
       occupiedDeg = 360.0 - unoccupiedDeg;
       // alert(unoccupiedDeg);
       document.getElementById("piechart").style.backgroundImage = "conic-gradient(" + 
@@ -564,7 +565,6 @@
     </div>
     <input style="visibility:hidden;" id="timer" value=5></input>
     <div id="tab">
-      <a href="{% url 'mapping-lab' %}">ECE Lab</a>
       <a class="active" href="{% url 'mapping-uc2' %}">UC 2nd Floor</a>
       <a href="{% url 'mapping-demo' %}">Demo</a>
     </div>
