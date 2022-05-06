@@ -43,10 +43,11 @@ DEALINGS IN THE SOFTWARE.
 #define D6T_cmd 0x4C
 #define numPixels 16
 #define numReads 35 //two reads per pixel to get a double, plus 3 extraneous ones
-#define occupancyTemp 20.5 //room temp is around 20 degC
+#define occupancyDiff 0.5 //if avg. temp is > backgroundTemp + occupancyDiff it's occupied
 #define noiseTemp 35 //body temperature is around 32 degC, so if we're above 35 it's probably noise
 #define unoccupiedLimit 10 //number of consecutive unoccupied readings to change status to unoccupied
-#define occupiedLimit 10 //number of consecutive occupied readings to change status to occupied
+#define occupiedLimit 3 //number of consecutive occupied readings to change status to occupied
+#define backgroundReads 10 //number of reads to take when determining background temp
 
 String Status = "unoccupied";
 String oldstatus = "unoccupied";
@@ -60,9 +61,13 @@ int unoccupiedCount = 0;
 
 uint8_t ptatBuf[numReads];
 double tempBuf[numPixels];
+uint8_t backgroundBuf[numReads];
+double sumBuf[numPixels];
+double backgroundTemp;
 int pirRead;
 int pirIn = D7;
-bool thermalRead;
+int thermalRead; //0 = false, 1 = true, 2 = too noisy
+bool inPossibleOccupancyMode;
 
 #define AWS_IOT_PUBLISH_TOPIC   "esp8266_10E_03/pub"
 #define AWS_IOT_SUBSCRIBE_TOPIC "esp8266_10E_03/sub"
@@ -167,11 +172,72 @@ void publishMessage()
 }
 
 //Converts an 8-bit unsigned to a 16-bit signed -- modified from Omron Github repo
-int16_t conv8us_s16_le(int n) {
-    int ret;
-    ret = ptatBuf[n];
-    ret += ptatBuf[n + 1] << 8;
-    return (int16_t)ret;
+int16_t conv8us_s16_le(int n, uint8_t buf[numReads]) {
+  int ret;
+  ret = buf[n];
+  ret += buf[n + 1] << 8;
+  return (int16_t)ret;
+}
+
+//Takes background reading of temperature for node
+void getThermalBackground()
+{
+  memset(sumBuf, 0, numPixels);
+
+  //Take 10 readings and sum all up in sumBuf
+  int i = 0;
+  while (i < backgroundReads) {
+
+    memset(backgroundBuf, 0, numReads);
+    
+    //Let thermal sensor know we're about to request
+    Wire.beginTransmission(D6T_addr);
+    Wire.write(D6T_cmd);
+    Wire.endTransmission();
+  
+    //Ask for all data points from sensor
+    Wire.requestFrom(D6T_addr, numReads);
+  
+    //Readings come in PTAT (Proportional To Absolute Temperature) form
+    int j=0;
+    while (Wire.available()) {
+      uint8_t reading = Wire.read();
+      backgroundBuf[j] = reading;
+      j++;
+    }
+  
+    //Get reading in double form and convert from PTAT->temp in degC (from Omron Github repo)
+    double ptat = (double)conv8us_s16_le(0, backgroundBuf) / 10.0; //Filters out first 2 data points which aren't needed
+    for (j = 0; j < numPixels; j++) {
+      int16_t temp = conv8us_s16_le(2 + 2*j, backgroundBuf);
+      sumBuf[j] += (double)temp / 10.0;
+    }
+
+    //Filter out bad reads
+    if (ptat > 0) i++;
+
+    //Output results to serial
+    Serial.print("PTAT:");
+    Serial.print(ptat, 1);
+    Serial.print(" [degC], Temperature: ");
+    for (j = 0; j < numPixels; j++) {
+      Serial.print(sumBuf[j], 1);
+      Serial.print(", ");
+    } 
+    Serial.println(" [degC]");
+
+
+    delay(2500);
+  }
+
+  //Get average temperature for background
+  for (int i = 0; i < backgroundReads; i++) {
+    backgroundTemp += sumBuf[i];
+  }
+  backgroundTemp /= backgroundReads * backgroundReads;
+  
+  Serial.print("Background Temp:");
+  Serial.println(backgroundTemp);
 }
 
 void getThermalReadings()
@@ -196,13 +262,13 @@ void getThermalReadings()
   }
 
   //Get reading in double form and convert from PTAT->temp in degC (from Omron Github repo)
-  double ptat = (double)conv8us_s16_le(0) / 10.0; //Filters out first 2 data points which aren't needed
+  double ptat = (double)conv8us_s16_le(0, ptatBuf) / 10.0; //Filters out first 2 data points which aren't needed
   for (i = 0; i < numPixels; i++) {
-    int16_t temp = conv8us_s16_le(2 + 2*i);
+    int16_t temp = conv8us_s16_le(2 + 2*i, ptatBuf);
     tempBuf[i] = (double)temp / 10.0;
   }
 
-/*
+
   //Output results to serial
   Serial.print("PTAT:");
   Serial.print(ptat, 1);
@@ -212,7 +278,7 @@ void getThermalReadings()
     Serial.print(", ");
   } 
   Serial.println(" [degC]");
-*/
+
 }
 
 void detectOccupancy()
@@ -227,9 +293,10 @@ void detectOccupancy()
   //Serial.println(avgTemp);
 
   //Compare average temp to occupancy and noise thresholds
-  thermalRead = false;
-  if (avgTemp >= occupancyTemp && occupancyTemp <= noiseTemp)
-    thermalRead = true;
+  thermalRead = 0;
+  if (avgTemp >= backgroundTemp + occupancyDiff && avgTemp <= noiseTemp)
+    thermalRead = 1;
+  else if (avgTemp == 0) thermalRead = 2;
 
   Serial.print("Thermal: ");
   Serial.print(thermalRead);
@@ -238,10 +305,10 @@ void detectOccupancy()
   if (Status == "occupied") {
 
     //When occupied we're only using thermal readings to confirm occupancy
-    if (thermalRead)
+    if (thermalRead == 1)
       unoccupiedCount = 0;
 
-    //Thermal sensor indicates no occupancy
+    //Thermal sensor indicates no occupancy or is noisy -- shouldn't happen 10x in a row
     else {
       unoccupiedCount++;
       if (unoccupiedCount >= unoccupiedLimit) {
@@ -255,16 +322,43 @@ void detectOccupancy()
   //Case by current status -- unoccupied
   else {
 
-    //When unoccupied, we need a PIR read too -- this one is a bool with HIGH as true
-    pirRead = digitalRead(pirIn);
+    //Currently doesn't look like there's occupancy
+    if (!inPossibleOccupancyMode) {
 
-    Serial.print(", PIR: ");
-    Serial.print(pirRead);
+      //When unoccupied, we need a PIR read too -- this one is a bool with HIGH as true
+      pirRead = digitalRead(pirIn);
+  
+      Serial.print(", PIR: ");
+      Serial.print(pirRead);
+  
+      //If PIR reads high, we need 3 thermal reads to confirm (this one included)
+      if (pirRead == HIGH) {
+        
+        inPossibleOccupancyMode = true;
+        if (thermalRead == 1) occupiedCount++;
+      }
+    }
 
-    //Both thermal and PIR sensors indicate occupancy
-    if (thermalRead && pirRead == HIGH) {
-      oldstatus = Status;
-      Status = "occupied";
+    //In occupancy detect mode -- we need two more high thermals before a low thermal
+    else {
+    
+      if (thermalRead == 0) {
+
+        occupiedCount = 0;
+        inPossibleOccupancyMode = false;
+      }
+
+      else if (thermalRead == 1) {
+
+        occupiedCount++;
+        if (occupiedCount >= occupiedLimit) {
+          
+          occupiedCount = 0;
+          inPossibleOccupancyMode = false;       
+          oldstatus = Status;
+          Status = "occupied";
+        }
+      }
     }
   }
 
@@ -311,6 +405,9 @@ void setup()
     
   Serial.begin(115200);
   Serial.flush();
+
+  delay(1000);
+  getThermalBackground();
   //connectAWS();
 
 }
