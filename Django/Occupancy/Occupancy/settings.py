@@ -26,7 +26,9 @@ SECRET_KEY = 'q0pc8ax_f$@2=4_)wz!rgw50mef)z5jew40e4ppth$$%w5=@-='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'ec2-52-15-186-208.us-east-2.compute.amazonaws.com', 'occupancymonkey.com', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
+
+# ALLOWED_HOSTS = ['localhost', 'ec2-52-15-186-208.us-east-2.compute.amazonaws.com', 'occupancymonkey.com', '127.0.0.1']
 
 
 # Application definition
